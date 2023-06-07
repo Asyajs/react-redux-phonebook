@@ -1,34 +1,17 @@
 import React from "react";
 import { useState } from "react";
 import css from './ContactForm.module.css';
+import { useSelector, useDispatch } from "react-redux";
+import { nanoid } from 'nanoid';
+import { addContact } from "redux/store";
 
-
- export const ContactForm = (props) => {
-   const { addNewContact, checkName } = props;
-  // const { name, handleNameChange, number, handleNumberChange, handleClick } = props;
-  // state = {
-  //   name: '',
-  //   number: ''
-  // }
-
-  // const initialState = {
-  //   name: '',
-  //   number: ''
-  // }
+export const ContactForm = () => {
+  const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
 
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
-//  const handleChangeName = event => {
-//     // this.setState({ [event.target.name]: event.target.value })
-//    setName(event.target.value)
-//    }
-   
-//  const handleChangeNumber = event => {
-//     // this.setState({ [event.target.name]: event.target.value })
-//    setNumber(event.target.value)
-//    }
-   
+  
  const handleChange = (event, name) => {
    if (name === 'name') {
      setName(event.target.value)
@@ -37,30 +20,27 @@ import css from './ContactForm.module.css';
    }
   }
 
+  const checkName = (name) => {
+    return contacts.some(contact => contact.name.toLowerCase() === name.toLowerCase());
+  };
+
  const handleSubmit = e => {
     e.preventDefault();
     if (name && number) {
       if (checkName(name)) {
         alert(`${name} already in contact`)
       } else {
-        addNewContact({name, number});
+        dispatch(addContact({ name, number, id: nanoid() }));
         reset()
       }
     }
   }
 
  const reset = () => {
-    // this.setState({
-    //   name: '',
-    //   number: ''
-    // })
    setName('');
    setNumber('');
   };
 
-
-  console.log('name', name);
-  console.log('num', number);
   return (
     <form autoComplete="off" onSubmit={handleSubmit} >
       <label htmlFor="name">
